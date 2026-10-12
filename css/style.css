@@ -1,0 +1,245 @@
+/* Базовий reset та змінні */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-color: #f4f4f9;
+  --text-color: #333;
+  --primary-color: #6a1b9a;
+  --accent-color: #fbc02d;
+  --white: #fff;
+}
+
+body {
+  
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+  
+
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; 
+}
+
+/* Крок 7: Базова адаптивність зображень */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* --- HEADER ТА НАВІГАЦІЯ (Flexbox) --- */
+header {
+  background-color: var(--primary-color);
+  padding: 20px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+  color: var(--white);
+  font-size: 2rem;
+}
+
+/* Крок 2: Навігація через Flexbox */
+header nav {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px; /* сучасний відступ між елементами */
+}
+
+header nav a {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+
+main {
+  
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  
+  
+  flex: 1; 
+  width: 100%; 
+}
+
+section {
+  margin-bottom: 40px;
+}
+
+h2 {
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--accent-color);
+  padding-bottom: 5px;
+}
+
+/* Картка поточного питання */
+#current-question {
+  background-color: var(--white);
+  padding: 32px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* ФОРМА ВІДПОВІДЕЙ (Мобільний вигляд: стовпчик)  */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+form div {
+  width: 100%;
+}
+
+form label {
+  display: block;
+  padding: 12px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+/* Правильне приховування radio, щоб працювала валідація браузера */
+form input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+form label:hover {
+  background-color: var(--accent-color);
+  color: var(--text-color);
+}
+
+/* --- ІСТОРІЯ СПРОБ (Галерея карток) --- */
+.cards {
+  display: grid;
+  grid-template-columns: 1fr; /* Мобільний: 1 колонка */
+  gap: 16px;
+}
+
+#history article {
+  background-color: var(--white);
+  padding: 10px;
+  border-radius: 8px;
+  border-left: 4px solid var(--accent-color);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+#history h3 {
+  margin: 0 0 5px 0;
+  font-size: 1.1rem;
+}
+
+#history p {
+  margin: 0;
+  font-weight: 500;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #e0e0e0;
+  color: #666;
+  font-size: 0.9rem;
+}
+/* Планшет */
+@media (min-width: 600px) {
+  /* Варіант 8: варіанти відповідей — сітка 2 колонки */
+  form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+/* Десктоп */
+@media (min-width: 1024px) {
+  /* Варіант 8: картка питання центрована з max-width */
+  #current-question {
+    max-width: 600px;
+    margin: 0 auto 40px auto;
+  }
+
+  /* Варіант 8: картки історії спроб — 3 колонки */
+  .cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+/* НЕЧІТКА ВИМОГА: «проходження квізу має бути захопливим».
+   Обґрунтування: Щоб створити відчуття гри (гейміфікації), додано 
+   яскравий прогрес-бар та великий, виразний номер поточного питання.
+   Це динамізує інтерфейс та мотивує користувача завершити вікторину. */
+   
+.progress-container {
+  margin-bottom: 20px;
+}
+
+.question-number {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 12px;
+  background-color: #e0e0e0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--accent-color);
+  border-radius: 6px;
+}
+
+/* ЧІТКА ВИМОГА: правильна/неправильна відповідь з контрастом >= 4.5:1
+   та додатковим текстовим індикатором (символи ✔ та ✘ у HTML). */
+
+/* Правильна відповідь: темно-зелений фон (#1B5E20), контраст білого тексту 7.2:1 */
+form label.correct-answer {
+  background-color: #1B5E20; 
+  color: #ffffff;
+  border: 2px solid #1B5E20;
+}
+
+/* Неправильна відповідь: темно-червоний фон (#B71C1C), контраст білого тексту 7.0:1 */
+form label.wrong-answer {
+  background-color: #B71C1C;
+  color: #ffffff;
+  border: 2px solid #B71C1C;
+}
+
+/* Додаткове візуальне виділення символів (✔/✘) всередині кнопок */
+form label span {
+  font-weight: 900;
+  margin-left: 8px;
+}
+/* Підсвічування обраного варіанта відповіді */
+form input[type="radio"]:checked + label {
+  background-color: var(--accent-color);
+  color: var(--text-color); /* Або black, щоб текст добре читався на жовтому фоні */
+  font-weight: bold;
+}

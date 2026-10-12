@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вікторина</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+
+  <header>
+    <h1>Вікторина</h1>
+    <nav>
+      <a href="#current-question">Питання</a>
+      <a href="#history">Результати</a>
+    </nav>
+  </header>
+  
+ <main>
+  <!-- Крок 2: Підключення CDN Vue 3 -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <!-- Головний контейнер для нашого Vue-застосунку -->
+  <div id="app">
+    
+    <!-- Блок керування -->
+    <section id="current-question">
+      <div id="quiz-controls" style="text-align: center; margin-bottom: 20px;">
+        <button v-if="!quizStarted && !quizFinished" @click="loadData" id="start-btn" style="padding: 10px 20px; background-color: var(--primary-color); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px;">
+          Завантажити питання (Нова гра)
+        </button>
+        
+        <p v-if="isLoading" id="loading-text" style="font-weight: bold; color: var(--accent-color);">
+          Завантаження питань з сервера...
+        </p>
+        <p v-if="errorMessage" id="error-message" style="color: red; font-weight: bold;">
+          {{ errorMessage }}
+        </p>
+      </div>
+
+      <!-- Блок самої вікторини (Показується тільки коли гра йде) -->
+      <div v-if="quizStarted && !quizFinished" id="quiz-content">
+        <div class="progress-container">
+          <span class="question-number">Питання {{ currentQuestionIndex + 1 }} з {{ quizQuestions.length }}</span>
+          <div class="progress-bar">
+            <div class="progress-fill" :style="{ width: progressPercentage + '%' }"></div>
+          </div>
+        </div>
+        
+        <!-- Крок 4: Наш дочірній компонент QuizQuestion -->
+        <!-- Ми передаємо йому дані через props і слухаємо подію @answer -->
+        <quiz-question 
+          :question="currentQuestion.question"
+          :options="currentQuestion.options"
+          :correct-answer="currentQuestion.answer"
+          :has-answered="hasAnswered"
+          :selected-answer="selectedAnswer"
+          @answer="checkAnswer"
+        ></quiz-question>
+        
+        <!-- Результат поточної відповіді -->
+        <p v-if="hasAnswered" id="result-message" :style="{ color: isCorrect ? 'green' : 'red', fontWeight: 'bold', marginTop: '15px' }">
+          {{ isCorrect ? 'Правильно ✔' : 'Неправильно ✘ (Правильна: ' + currentQuestion.answer + ')' }}
+        </p>
+        
+        <div style="margin-top: 20px;">
+          <button v-if="hasAnswered" @click="nextQuestion" id="next-btn" style="padding: 10px 20px; background-color: var(--accent-color); color: black; border: none; border-radius: 6px; cursor: pointer;">
+            Наступне питання
+          </button>
+        </div>
+      </div>
+
+      <!-- Фінальний екран -->
+      <div v-if="quizFinished" style="text-align: center;">
+        <h2>Вікторина завершена!</h2>
+        <h3>Твій результат: {{ correctCount }} з {{ quizQuestions.length }}</h3>
+        <button @click="resetQuiz" style="padding: 10px 20px; background-color: var(--primary-color); color: white; border: none; border-radius: 6px; cursor: pointer; margin-top: 20px;">
+          Почати нову гру
+        </button>
+      </div>
+<!-- Історія результатів (Таблиця лідерів) -->
+      <div v-if="resultsHistory.length > 0" id="history" style="margin-top: 40px;">
+        <h2>Найкращі результати (IndexedDB)</h2>
+        <div class="cards">
+          <article v-for="res in resultsHistory" :key="res.id" style="margin-bottom: 15px;">
+            <h3 style="color: var(--primary-color);">Результат: {{ res.score }} з {{ res.total }}</h3>
+            <p style="margin: 0; font-size: 0.9em; color: #555;">Дата: {{ res.date }}</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+  <footer>
+    <p>Авторство: [Дяченко Богдан] &copy; 2026</p>
+  </footer>
+
+  
+</body>
+</html>
